@@ -1,31 +1,21 @@
-# KEITHLEY DATA LOGGER
-# (C) 2013 Geoffrey "GEOFBOT" Mon
+# Serial data logger
+# Based on http://forum.keithley.com/phpBB3/viewtopic.php?f=32&t=13020
 
 """
-Connects to a serial device and continously requests and logs data.
+Connects to a serial device and continously requests and prints data.
 """
 
-# Import our modules.
 import serial
-import msvcrt
+import time
 
-device = serial.Serial("COM3", 9600, xonxoff = True)
-log = open("serial-logger.log", 'w')
+device = serial.Serial("COM1", 9600, xonxoff = True)
 
-print("Press Ctrl-C to quit.")
-
-run = True
-
-while run:
-    try:
-        device.write("data?")
-        if device.readable():
-            log.write(device.readline() + '\n')
-    except KeyboardInterrupt:  
-        run = False
-    
-log.close()    
-
-
-
-
+while True:
+    device.write(":FETCh?\r\n")
+    time.sleep(0.1)
+    out = ""
+    while device.inWaiting() > 0:
+        out += device.read(1)
+    if out != '':
+        out = out.rstrip()
+        print(time.time() + "," + out)
