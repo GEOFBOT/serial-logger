@@ -18,4 +18,4 @@ while True:
         out += device.read(1)
     if out != '':
         out = out.rstrip()
-        print(time.time() + "," + out)
+        print(str(time.time()) + "," + out)
